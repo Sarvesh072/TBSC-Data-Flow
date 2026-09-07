@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zeb — How Your AI Platform Keeps Customer Data Safe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest-900:#161E1C; --forest-850:#1C2624; --forest-800:#222F30;
+    --forest-700:#2B3836; --forest-600:#36433F; --forest-500:#3F4845;
+    --forest-400:#5A6362; --forest-300:#717D7A;
+    --paper-0:#F4F3EC; --paper-1:#ECEAE0; --paper-2:#E1DFD3; --paper-line:#D7D5C8;
+    --sprout:#CEF79F; --sprout-bri:#DCFFB4; --sprout-deep:#B2E27E; --sprout-ink:#25361A;
+    --clay:#C46B43; --clay-deep:#A9552F;
+    --fg-on-dark-1:#F4F3EC; --fg-on-dark-2:#B6BDB8; --fg-on-dark-3:#717D7A;
+    --fg-on-paper-1:#1C2624; --fg-on-paper-2:#4A544F; --fg-on-paper-3:#7C847D;
+    --border-dark:rgba(244,243,236,0.10); --border-dark-strong:rgba(244,243,236,0.18);
+    --border-paper:#D7D5C8;
+    --font-sans:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{margin:0;background:var(--paper-1);}
+  body{font-family:var(--font-sans);font-size:16px;line-height:1.6;color:var(--fg-on-paper-1);-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4,p{margin:0;}
+  section{box-sizing:border-box;padding:56px 90px;}
+  @media (max-width:900px){ section{padding:36px 20px;} }
+  .max{max-width:1080px;margin:0 auto;}
+  .eyebrow{font-family:var(--font-mono);font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;}
+  .eyebrow--sprout{color:var(--sprout);}
+  .eyebrow--clay-onpaper{color:var(--clay-deep);}
+
+  /* ---- Hero ---- */
+  .forest-silk{
+    background-color:var(--forest-900);
+    background-image:
+      radial-gradient(120% 80% at 15% 10%, rgba(111,136,95,0.35) 0%, transparent 55%),
+      radial-gradient(90% 70% at 85% 30%, rgba(57,74,52,0.5) 0%, transparent 60%),
+      radial-gradient(140% 120% at 70% 100%, rgba(20,30,24,0.9) 0%, transparent 70%),
+      radial-gradient(rgba(244,243,236,0.08) 1px, transparent 1px);
+    background-size: auto, auto, auto, 28px 28px;
+    color:var(--fg-on-dark-1);
+  }
+  .wordmark{font-family:var(--font-sans);font-weight:800;font-size:24px;color:var(--sprout);letter-spacing:-0.02em;}
+  .h1{font-weight:300;font-size:42px;line-height:1.12;letter-spacing:-0.02em;margin-top:22px;max-width:720px;}
+  .lede{font-weight:400;font-size:16.5px;line-height:1.6;color:var(--fg-on-dark-2);margin-top:18px;max-width:660px;}
+
+  /* ---- Steps section ---- */
+  .section-head{margin-bottom:36px;}
+  .section-head h2{font-weight:400;font-size:26px;letter-spacing:-0.01em;color:var(--fg-on-paper-1);margin-top:10px;}
+  .section-head p{font-size:15px;color:var(--fg-on-paper-2);margin-top:8px;max-width:64ch;}
+  .steps{display:flex;flex-direction:column;gap:0;position:relative;}
+  .step{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    gap:24px;
+    padding:22px 0;
+    border-bottom:1px solid var(--border-paper);
+    position:relative;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .step:last-child{border-bottom:none;}
+  .step-num{
+    font-family:var(--font-mono);
+    font-size:14px;
+    color:var(--sprout-ink);
+    background:var(--sprout);
+    width:40px;height:40px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+  }
+  .step-body h3{font-size:18px;font-weight:700;color:var(--fg-on-paper-1);}
+  .step-body p{font-size:14.5px;color:var(--fg-on-paper-2);margin-top:6px;max-width:64ch;line-height:1.6;}
+  .step-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .step-tag{font-family:var(--font-mono);font-size:11.5px;color:var(--fg-on-paper-2);background:var(--paper-2);border:1px solid var(--border-paper);padding:5px 11px;border-radius:16px;}
+
+  .channels{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+  .channel{
+    display:flex;align-items:center;gap:8px;
+    background:#fff;border:1px solid var(--border-paper);border-radius:10px;
+    padding:10px 14px;font-size:13.5px;font-weight:600;color:var(--fg-on-paper-1);
+  }
+  .channel .ico{width:8px;height:8px;border-radius:50%;background:var(--clay);flex:0 0 auto;}
+
+  .mini-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .mini-node{
+    font-size:12.5px;font-weight:700;color:var(--fg-on-paper-1);
+    background:var(--paper-0);border:1px solid var(--border-paper);border-radius:8px;
+    padding:8px 12px;
+  }
+  .mini-arrow{color:var(--fg-on-paper-3);font-size:14px;}
+
+  /* ---- Vault Section ---- */
+  .vault-section{background:var(--forest-850);color:var(--fg-on-dark-1);break-inside: avoid;page-break-inside: avoid;}
+  .vault-box{
+    border:1.5px dashed rgba(206,247,159,0.35);
+    border-radius:16px;
+    padding:34px;
+    position:relative;
+    background:rgba(206,247,159,0.03);
+  }
+  .vault-label{
+    position:absolute;top:-13px;left:28px;
+    background:var(--forest-850);
+    padding:0 10px;
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--sprout);
+  }
+  .vault-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:8px;}
+  @media (max-width:1000px){ .vault-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .vault-grid{grid-template-columns:1fr;} }
+  .vault-card{
+    background:var(--forest-800);border:1px solid var(--border-dark-strong);border-radius:12px;
+    padding:20px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .vault-card .ico-circle{
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(206,247,159,0.12);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:12px;
+    font-family:var(--font-mono);font-size:14px;color:var(--sprout);
+  }
+  .vault-card h4{font-size:14.5px;font-weight:700;color:var(--fg-on-dark-1);}
+  .vault-card p{font-size:13px;color:var(--fg-on-dark-2);margin-top:6px;line-height:1.55;}
+
+  /* ---- Safe Banner ---- */
+  .safe-banner{
+    margin-top:30px;
+    background:rgba(206,247,159,0.08);
+    border:1px solid rgba(206,247,159,0.3);
+    border-radius:14px;
+    padding:26px 28px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .safe-banner .eyebrow{margin-bottom:10px;}
+  .safe-list{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;}
+  @media (max-width:700px){ .safe-list{grid-template-columns:1fr;} }
+  .safe-list li{
+    font-size:14px;color:var(--fg-on-dark-1);
+    display:flex;gap:10px;align-items:flex-start;line-height:1.5;
+  }
+  .safe-list li::before{
+    content:"✓";
+    color:var(--sprout);
+    font-weight:700;
+    flex:0 0 auto;
+  }
+
+  /* ---- FAQ Section ---- */
+  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px;}
+  @media (max-width:800px){ .why-grid{grid-template-columns:1fr;} }
+  .why-card{background:#fff;border:1px solid var(--border-paper);border-radius:12px;padding:22px;break-inside: avoid;page-break-inside: avoid;}
+  .why-card h4{font-size:15px;font-weight:700;color:var(--fg-on-paper-1);}
+  .why-card p{font-size:13.5px;color:var(--fg-on-paper-2);margin-top:8px;line-height:1.6;}
+
+  footer{
+    padding:32px 90px 48px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.06em;
+    color:var(--fg-on-paper-3);
+    text-transform:uppercase;
+  }
+  @media (max-width:900px){ footer{padding:24px 20px 40px;} }
+
+  /* ---- PRINT COLOR & BREAK PRESERVATION ---- */
+  @media print {
+    body { 
+      -webkit-print-color-adjust: exact !important; 
+      print-color-adjust: exact !important; 
+    }
+    section { padding: 36px 40px !important; }
+    .forest-silk { break-after: page; page-break-after: always; }
+    .vault-section { break-before: page; page-break-before: always; }
+    .step, .vault-card, .why-card, .vault-box, .safe-banner { 
+      break-inside: avoid !important; 
+      page-break-inside: avoid !important; 
+    }
+    h1, h2, h3, h4 { 
+      break-after: avoid !important; 
+      page-break-after: avoid !important; 
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="forest-silk">
+  <div class="max">
+    <div class="wordmark">zeb</div>
+    <div class="eyebrow eyebrow--sprout" style="margin-top:26px;">TBSC · Data flow</div>
+    <h1 class="h1">Here's exactly what happens when a customer asks for a quote, a service, or an appointment — and why none of it ever leaves your systems.</h1>
+    <p class="lede">A simple walkthrough of what happens the moment someone reaches out about a service, a pending quote, or scheduling — right up to the reply they get back.</p>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section>
+  <div class="max">
+    <div class="section-head">
+      <div class="eyebrow eyebrow--clay-onpaper">The journey of a request</div>
+      <h2>From a typed message to a finished quote or analytics report</h2>
+      <p>This is the actual path a request takes through the platform — whether it comes in through the chatbot, a call with the Voice Agent, or a report requested from Better Genie.</p>
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>A customer or franchisor initiates an interaction</h3>
+          <p>End-customers reach out directly by typing into the chat widget or speaking with the AI Voice Agent (e.g., asking "I need my driveway pressure washed"). Meanwhile, franchisors ask Better Genie for performance insights and reports.</p>
+          <div class="channels">
+            <div class="channel"><span class="ico"></span>Chatbot widget</div>
+            <div class="channel"><span class="ico"></span>AI Voice Agent</div>
+            <div class="channel"><span class="ico"></span>Better Genie</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Your own application picks it up</h3>
+          <p>The message is received by the application we built for you, running privately inside your own AWS account — not on a shared server, and not visible from the public internet.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>It checks who's asking and what your business actually offers</h3>
+          <p>Before answering anything, the system confirms the customer's identity and pulls their record — and any pending quotes or past service history — from your own CRM. At the same time, it loads the exact services, questions, and pricing rules configured for that service, scoped to your specific business.</p>
+          <div class="mini-flow">
+            <div class="mini-node">Your CRM records</div>
+            <span class="mini-arrow">＋</span>
+            <div class="mini-node">Your configured services &amp; questions</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>The AI decides what to say or ask next</h3>
+          <p>That business context, together with the conversation so far, is sent once to AWS Bedrock (running Anthropic's Claude) — reachable only from inside your own environment, never over the public internet. The model doesn't invent pricing or policy; it simply decides, from what you've configured: ask the next question, confirm the service, or flag it for a person to review.</p>
+          <div class="step-tags">
+            <div class="step-tag">Runs on Amazon Bedrock</div>
+            <div class="step-tag">No public endpoint</div>
+            <div class="step-tag">Nothing retained by the model</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Live pricing, tax, and appointment slots come from your own systems</h3>
+          <p>Once the service is confirmed, the actual quote total, tax, and product pricing come from your own CRM and pricing configuration — never from the AI. If the customer is booking, the system checks real technician and truck availability from your calendar, factoring in job duration and travel distance, and offers back only slots that are genuinely available.</p>
+          <div class="step-tags">
+            <div class="step-tag">Your CRM pricing &amp; tax rules</div>
+            <div class="step-tag">Your calendar &amp; technician availability</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h3>Better Genie generates analytics securely via Amazon QuickSight</h3>
+          <p>When asking Better Genie for business reports, customer data is aggregated and visualized using Amazon QuickSight inside your private environment. Datasets are protected with Row-Level Security (RLS) and KMS encryption, ensuring raw customer data is never exposed or transferred outside.</p>
+          <div class="step-tags">
+            <div class="step-tag">Amazon QuickSight Engine</div>
+            <div class="step-tag">Row-Level Security (RLS)</div>
+            <div class="step-tag">KMS Encrypted Storage</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <h3>The customer gets their answer</h3>
+          <p>The reply — a follow-up question, a finished quote, a confirmed appointment slot, or a generated report — is sent straight back through the same window the customer started in. Nothing is left behind with the AI.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- VAULT / BOUNDARY -->
+<section class="vault-section">
+  <div class="max">
+    <div class="section-head">
+      <div class="eyebrow eyebrow--sprout">Where all of this happens</div>
+      <h2 style="color:var(--fg-on-dark-1);">Inside one place: your own secure environment</h2>
+      <p style="color:var(--fg-on-dark-2);">Every step above — the chatbot service, the CRM lookup, the AI, and QuickSight report generation — runs inside your company's own private AWS account. Nothing crosses out to the public internet, a shared system, or a third party at any point.</p>
+    </div>
+
+    <div class="vault-box">
+      <div class="vault-label">Your private AWS environment</div>
+      <div class="vault-grid">
+        <div class="vault-card">
+          <div class="ico-circle">1</div>
+          <h4>No public doors</h4>
+          <p>The AI is reached through a private connection inside your own environment. It has no public address and cannot be called from the open internet.</p>
+        </div>
+        <div class="vault-card">
+          <div class="ico-circle">2</div>
+          <h4>Only your application can use it</h4>
+          <p>No outside vendor, franchise, or system has any way to call the AI directly. Only the application we built specifically for you can.</p>
+        </div>
+        <div class="vault-card">
+          <div class="ico-circle">3</div>
+          <h4>Keys locked in a vault</h4>
+          <p>The credentials used to reach the AI, your CRM, and mapping services are stored in a secure digital vault — never written into code where they could be exposed.</p>
+        </div>
+        <div class="vault-card">
+          <div class="ico-circle">4</div>
+          <h4>Your data stays yours alone</h4>
+          <p>Each business's services, pricing rules, and customer records are kept separate in your own dedicated space.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="safe-banner">
+      <div class="eyebrow eyebrow--sprout">The short version, for your customers</div>
+      <ul class="safe-list">
+        <li>Every piece of data processed by the AI remains 100% private, fully encrypted, and strictly isolated from the public internet</li>
+        <li>Nothing they say to the chatbot is stored by the AI itself</li>
+        <li>Nothing is ever used to train any AI model</li>
+        <li>Every quote, price, and appointment comes from your own systems, not the AI</li>
+        <li>No outside company or vendor can ever see it</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- WHY IT MATTERS -->
+<section>
+  <div class="max">
+    <div class="section-head">
+      <div class="eyebrow eyebrow--clay-onpaper">FAQs</div>
+      <h2>Common questions</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <h4>"Does it remember what I told it?"</h4>
+        <p>Within a conversation, yes — so it doesn't ask you the same question twice, whether that's in the chatbot or on a call with the Voice Agent. But the AI model itself keeps no copy of what was said once the reply is sent; every answer is worked out fresh from your conversation and business records.</p>
+      </div>
+      <div class="why-card">
+        <h4>"Could my information end up training some AI somewhere?"</h4>
+        <p>No. Your data is never used by AWS or Anthropic (the AI maker) to train, retrain, or improve any model. It's used once, to work out the reply, and that's it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>TBSC AI platform &middot; data flow reference</footer>
+
+</body>
+</html>
